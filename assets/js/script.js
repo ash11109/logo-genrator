@@ -28,6 +28,8 @@ const fontPosition = [
 
 const companyName = "ABCD";
 
+const noOfLogos = 20 ;
+
 function getRandomIndex() {
   return {
     imgIndex: Math.floor(Math.random() * logoImg.length),
@@ -70,7 +72,7 @@ async function generateLogo() {
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  for (let index = 1; index <= 20; index++) {
+  for (let index = 1; index <= noOfLogos ; index++) {
     const { 
       imgIndex, fontIndex, colorIndex, sizeIndex, weightIndex, styleIndex,
       bgColorIndex, shadowIndex, canvasBgColorIndex, borderColorIndex, fontPositionIndex
