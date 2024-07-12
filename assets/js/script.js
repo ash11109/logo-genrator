@@ -20,6 +20,12 @@ const shadows = [
 const canvasBgColors = ["#e0f7fa", "#ffe0b2", "#f3e5f5"];
 const borderColors = ["#ff0000", "#00ff00", "#0000ff"];
 
+const fontPosition = [
+  { x : 50 , y : 80 , radius : 0 , startAngle : 0 } ,
+  { x : 40 , y : 70 , radius : 0 , startAngle : 100 } ,
+  { x : 70 , y : 40 , radius : 0 , startAngle : 120 }
+]
+
 const companyName = "ABCD";
 
 function getRandomIndex() {
@@ -34,6 +40,7 @@ function getRandomIndex() {
     shadowIndex: Math.floor(Math.random() * shadows.length),
     canvasBgColorIndex: Math.floor(Math.random() * canvasBgColors.length),
     borderColorIndex: Math.floor(Math.random() * borderColors.length),
+    fontPositionIndex: Math.floor(Math.random() * fontPosition.length),
   };
 }
 
@@ -46,22 +53,15 @@ function loadImage(src) {
   });
 }
 
-function drawCurvedText(ctx, text, x, y, radius, startAngle, textAlign) {
+function drawText( canvas ,ctx, text, fontPosition ) {
+  
   ctx.save();
-  // ctx.translate(x, y);
-  ctx.translate(100,170);
-  ctx.rotate(startAngle);
-  ctx.textAlign = textAlign;
-
-  for (let i = 0; i < text.length; i++) {
-    const char = text[i];
-    const charWidth = ctx.measureText(char).width;
-    ctx.rotate(charWidth / 2 / radius);
-    ctx.fillText(char, 0, -radius);
-    ctx.rotate(charWidth / 2 / radius);
-  }
-
+  ctx.translate( fontPosition.x, fontPosition.y );
+  ctx.rotate( fontPosition.startAngle );
+  ctx.textAlign = "center" ;
+  ctx.fillText( text, fontPosition.x , fontPosition.y );
   ctx.restore();
+
 }
 
 async function generateLogo() {
@@ -73,19 +73,15 @@ async function generateLogo() {
   for (let index = 1; index <= 20; index++) {
     const { 
       imgIndex, fontIndex, colorIndex, sizeIndex, weightIndex, styleIndex,
-      bgColorIndex, shadowIndex, canvasBgColorIndex, borderColorIndex 
+      bgColorIndex, shadowIndex, canvasBgColorIndex, borderColorIndex, fontPositionIndex
     } = getRandomIndex();
 
     try {
-      // Apply random canvas background color
       ctx.fillStyle = canvasBgColors[canvasBgColorIndex];
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      // Apply random border color
       ctx.strokeStyle = borderColors[borderColorIndex];
       ctx.lineWidth = 1;
       ctx.strokeRect(0, 0, canvas.width, canvas.height);
-
       const img = await loadImage(logoImg[imgIndex]);
       ctx.drawImage(img, 50, 50, 100, 100);
 
@@ -100,12 +96,7 @@ async function generateLogo() {
       ctx.fillStyle = logoFontsColor[colorIndex];
       ctx.textAlign = "center";
 
-      const textX = Math.random() * (canvas.width - 200) + 100;
-      const textY = Math.random() * (canvas.height - 200) + 100;
-
-      const radius = Math.random() * 1 + 20;
-      const startAngle = (Math.random() * 2 - 1) * Math.PI / 2;
-      drawCurvedText(ctx, companyName, textX, textY, radius, startAngle, "center");
+      drawText(canvas ,ctx, companyName, fontPosition[fontPositionIndex] );
 
       const dataURL = canvas.toDataURL("image/png");
       const imgElement = document.createElement("img");
